@@ -19,7 +19,7 @@ export default function AlertsDashboard() {
     <div className="p-6 bg-slate-950 min-h-screen text-white">
       <h2 className="text-lg font-mono mb-4 border-b border-slate-800 pb-2">🚨 LIVE TELEMETRY STREAMS</h2>
       <div className="space-y-2">
-        {alerts.length === 0 && <p className="text-xs text-slate-500">Listening to operational websocket channel...</p>}
+        {alerts.length === 0 && <p className="text-xs text-slate-500">Listening to active operational websocket channel...</p>}
         {alerts.map((a, i) => (
           <div key={i} className="p-3 bg-slate-900 border border-slate-800 rounded text-xs">{a.message}</div>
         ))}

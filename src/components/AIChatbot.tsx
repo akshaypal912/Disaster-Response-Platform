@@ -18,7 +18,7 @@ export function AIChatbot() {
       const data = await res.json();
       setChat(prev => [...prev, { role: 'bot', text: data.reply }]);
     } catch {
-      setChat(prev => [...prev, { role: 'bot', text: 'Local guidance active: Evacuate vector, wait for backup.' }]);
+      setChat(prev => [...prev, { role: 'bot', text: 'Local guidance override: Evacuate current sector, monitor official broadcasts.' }]);
     }
   };
 
