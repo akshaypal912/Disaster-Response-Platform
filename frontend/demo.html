@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disaster Response Tactical HUD - Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen selection:bg-red-600 selection:text-white">
+
+    <header class="border-b border-slate-900 bg-slate-900/40 backdrop-blur sticky top-0 z-50 px-6 py-4 flex flex-wrap justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+            <span class="h-3 w-3 bg-emerald-500 rounded-full animate-ping"></span>
+            <h1 id="hud-title" class="text-sm font-mono tracking-widest text-white uppercase font-bold">DISASTER RESPONSE HUBSYSTEM v1.0.8</h1>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="toggleLang()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-xs font-mono text-slate-300 rounded border border-slate-700 transition">
+                🌐 <span id="lang-btn">SWITCH TO ZULU</span>
+            </button>
+            <span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded text-[10px] font-mono">
+                OFFLINE-FIRST ACTIVE
+            </span>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-4 lg:p-8 space-y-8">
+
+        <div class="bg-red-950/20 border border-red-900/30 p-4 rounded-xl flex items-center gap-3">
+            <i class="fa-solid fa-triangle-exclamation text-red-500 text-lg animate-bounce"></i>
+            <p id="alert-banner" class="text-xs text-red-400 font-mono">CRITICAL TELEMETRY STABILIZED: ALL 11 MAJOR PIPELINE ISSUES INTEGRATED AND VERIFIED.</p>
+        </div>
+
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="p-4 bg-slate-900/60 border border-slate-800/80 rounded-xl">
+                <p id="stat-incidents-label" class="text-[10px] uppercase tracking-wider text-slate-400 font-mono">Active Local Incidents</p>
+                <p class="text-2xl font-bold text-red-500 font-mono mt-1">03</p>
+            </div>
+            <div class="p-4 bg-slate-900/60 border border-slate-800/80 rounded-xl">
+                <p id="stat-zones-label" class="text-[10px] uppercase tracking-wider text-slate-400 font-mono">Safe Zones Connected</p>
+                <p class="text-2xl font-bold text-emerald-400 font-mono mt-1">14</p>
+            </div>
+            <div class="p-4 bg-slate-900/60 border border-slate-800/80 rounded-xl">
+                <p id="stat-responders-label" class="text-[10px] uppercase tracking-wider text-slate-400 font-mono">Active Responders</p>
+                <p class="text-2xl font-bold text-blue-400 font-mono mt-1">32</p>
+            </div>
+            <div class="p-4 bg-slate-900/60 border border-slate-800/80 rounded-xl">
+                <p id="stat-websocket-label" class="text-[10px] uppercase tracking-wider text-slate-400 font-mono">WebSocket Channels</p>
+                <p class="text-2xl font-bold text-amber-500 font-mono mt-1">SECURE</p>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <div class="space-y-8 lg:col-span-1">
+                
+                <div class="bg-red-950/20 border border-red-900/40 p-6 rounded-2xl space-y-4">
+                    <h3 id="sos-title" class="text-xs font-mono font-bold text-red-500 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-radiation animate-pulse"></i> DIRECT TACTICAL SOS GATEWAY
+                    </h3>
+                    <p id="sos-desc" class="text-xs text-slate-400">Instantly broadcast coordinates & activate distress beacon on the network.</p>
+                    <button id="sos-btn" onclick="triggerSOS()" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-mono font-bold rounded-lg text-xs tracking-wider transition-all shadow-lg shadow-red-900/40">
+                        TRIGGER SOS BROADCAST
+                    </button>
+                    <div id="sos-telemetry" class="hidden text-center p-2 bg-red-950/50 border border-red-800 rounded font-mono text-[10px] text-red-400 animate-pulse">
+                        ⚠️ BROADCASTING VECTOR: GPS -29.8587, 31.0218
+                    </div>
+                </div>
+
+                <div class="p-6 bg-slate-900/50 border border-slate-800/80 rounded-2xl space-y-3">
+                    <h3 id="tts-title" class="text-xs font-mono font-bold text-slate-300">🎙️ AUDITORY SOP INTERFACE</h3>
+                    <p id="tts-desc" class="text-xs text-slate-400">Play spoken standard operating procedures for blind or compromised operators.</p>
+                    <button onclick="speakSOP()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-mono border border-slate-700 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-volume-high"></i> PLAY AUDITORY SOP
+                    </button>
+                </div>
+
+                <div class="p-6 bg-slate-900/50 border border-slate-800/80 rounded-2xl space-y-4">
+                    <h3 id="feed-title" class="text-xs font-mono font-bold text-slate-300">Isiteshi Semibiko / Feedback Channel</h3>
+                    <textarea id="feed-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-white focus:border-red-500 outline-none" placeholder="Enter incident specifications..."></textarea>
+                    <button id="feed-btn" onclick="alert('Telemetry recorded / Umbiko ugciniwe')" class="w-full py-2 bg-red-600 hover:bg-red-500 text-white font-mono text-xs rounded-lg transition uppercase">
+                        Transmit / Thumela
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="space-y-8 lg:col-span-2">
+
+                <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-6 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 id="map-title" class="text-xs font-mono font-bold text-slate-300 flex items-center gap-2">
+                            <i class="fa-solid fa-satellite-dish text-red-500"></i> ACTIVE GEOSPATIAL GIS GRID
+                        </h3>
+                        <span class="px-2 py-0.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded text-[9px] font-mono">
+                            GPS SYNCED
+                        </span>
+                    </div>
+                    <div class="h-64 w-full bg-slate-950 border border-slate-800 rounded-xl relative overflow-hidden flex items-center justify-center">
+                        <div class="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] opacity-40"></div>
+                        <div class="absolute w-24 h-24 bg-red-500/5 border border-red-500/20 rounded-full animate-ping"></div>
+                        <div class="z-10 text-center space-y-1">
+                            <p class="text-xs text-red-500 font-bold font-mono tracking-wider animate-pulse">🔴 ACTIVE INCIDENT ZONE IDENTIFIED</p>
+                            <p class="text-[10px] text-slate-500 font-mono">Durban Metropole Hub Coordinate Vectors</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h4 id="nearby-title" class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Estimated Nearest Facilities</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="p-3 bg-slate-950 border border-slate-800 rounded-lg flex justify-between items-center text-xs">
+                                <span class="text-slate-300 font-mono">Trauma Response Center</span>
+                                <span class="text-red-400 font-bold font-mono">0.6 km</span>
+                            </div>
+                            <div class="p-3 bg-slate-950 border border-slate-800 rounded-lg flex justify-between items-center text-xs">
+                                <span class="text-slate-300 font-mono">Emergency Rescue Safehaven</span>
+                                <span class="text-red-400 font-bold font-mono">1.2 km</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-6 space-y-4">
+                    <h3 id="ai-title" class="text-xs font-mono font-bold text-slate-300 flex items-center gap-2">
+                        <i class="fa-solid fa-robot text-red-500"></i> GOOGLE GEMINI TAC-AI ASSISTANT
+                    </h3>
+                    <div id="ai-chatbox" class="h-40 overflow-y-auto bg-slate-950 p-4 border border-slate-850 rounded-xl space-y-3 text-xs font-mono">
+                        <div class="p-2.5 bg-slate-900/80 rounded-lg border border-slate-800 text-slate-400 max-w-[85%]">
+                            [System] Connected to Gemini disaster analysis endpoint. Supply incident descriptors for tactical SOP.
+                        </div>
+                    </div>
+                    <form onsubmit="sendChatMessage(event)" class="flex gap-2">
+                        <input id="ai-input" type="text" placeholder="Type prompt (e.g. flood, evacuate, medical)..." class="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-red-500 outline-none">
+                        <button class="px-4 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-mono uppercase font-bold">Query</button>
+                    </form>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-6 bg-slate-900/50 border border-slate-800/80 rounded-2xl space-y-3">
+                        <h3 id="resource-title" class="text-xs font-mono font-bold text-slate-300">📦 ALLOCATED EMERGENCY SUPPLIES</h3>
+                        <div class="space-y-2 text-xs font-mono">
+                            <div class="p-2.5 bg-slate-950 rounded border border-slate-805 flex justify-between">
+                                <span class="text-slate-400">Water Storage Units</span>
+                                <span class="text-emerald-400 font-bold">120 Units</span>
+                            </div>
+                            <div class="p-2.5 bg-slate-950 rounded border border-slate-805 flex justify-between">
+                                <span class="text-slate-400">First-Aid Field Packs</span>
+                                <span class="text-emerald-400 font-bold">45 Units</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-slate-900/50 border border-slate-800/80 rounded-2xl space-y-3">
+                        <h3 id="alerts-title" class="text-xs font-mono font-bold text-slate-300">🚨 WEBSOCKET EVENTS (REAL-TIME)</h3>
+                        <div id="ws-alerts" class="space-y-2 h-24 overflow-y-auto text-[10px] font-mono text-slate-400">
+                            <div class="p-1.5 bg-slate-950 rounded border border-slate-850">● [14:40:02] Socket pipeline synchronized.</div>
+                            <div class="p-1.5 bg-slate-950 rounded border border-slate-850">● [14:42:15] Telemetry ping from Hub Durban.</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentLang = 'en';
+        const trans = {
+            en: {
+                hudTitle: "DISASTER RESPONSE HUBSYSTEM v1.0.8",
+                langBtn: "SWITCH TO ZULU",
+                alertBanner: "CRITICAL TELEMETRY STABILIZED: ALL 11 MAJOR PIPELINE ISSUES INTEGRATED AND VERIFIED.",
+                statIncidents: "Active Local Incidents",
+                statZones: "Safe Zones Connected",
+                statResponders: "Active Responders",
+                statWebsocket: "WebSocket Channels",
+                sosTitle: "DIRECT TACTICAL SOS GATEWAY",
+                sosDesc: "Instantly broadcast coordinates & activate distress beacon on the network.",
+                sosBtn: "TRIGGER SOS BROADCAST",
+                ttsTitle: "🎙️ AUDITORY SOP INTERFACE",
+                ttsDesc: "Play spoken standard operating procedures for blind or compromised operators.",
+                feedTitle: "Isiteshi Semibiko / Feedback Channel",
+                mapTitle: "ACTIVE GEOSPATIAL GIS GRID",
+                nearbyTitle: "Estimated Nearest Facilities",
+                aiTitle: "GOOGLE GEMINI TAC-AI ASSISTANT",
+                resourceTitle: "📦 ALLOCATED EMERGENCY SUPPLIES",
+                alertsTitle: "🚨 WEBSOCKET EVENTS (REAL-TIME)"
+            },
+            zu: {
+                hudTitle: "UMZILA WEZINHLUPHEKO NETHEKWINI v1.0.8",
+                langBtn: "GUQULA ISI-ENGLISH",
+                alertBanner: "IZINHLELO ZOKUXHUMANA ZIQINISEKISIWE: ZONKE IZINKINGA EZINGU-11 ZILUNGISIWEYO.",
+                statIncidents: "Izigameko Ezisebenzayo",
+                statZones: "Izindawo Ezivikelekile",
+                statResponders: "Abasizi Abakhona",
+                statWebsocket: "Iziteshi Ze-WebSocket",
+                sosTitle: "INDLELA ESHESHAYO YOSIZO (SOS)",
+                sosDesc: "Thumela imininingwane yendawo yakho ngokushesha ohlelweni lwethu.",
+                sosBtn: "THUMELA USIZO (SOS)",
+                ttsTitle: "🎙️ UKUFUNDWA KWE-SOP NGEZWI",
+                ttsDesc: "Lalela imiyalelo yokuphepha ekhulunywanga nge-TTS.",
+                feedTitle: "Isiteshi Semibiko / Umbono Wakho",
+                mapTitle: "IMEPHU YOKUXHUMANA KWE-GIS",
+                nearbyTitle: "Izindawo Zokusiza Eziseduze",
+                aiTitle: "U-GEMINI AI OMSIZI WETHEKWINI",
+                resourceTitle: "📦 IZINSiza EZIKHONA ZOKUSIZA",
+                alertsTitle: "🚨 IMIYALELO YESIKHATHI SAKONA (WEBSOCKET)"
+            }
+        };
+
+        function toggleLang() {
+            currentLang = currentLang === 'en' ? 'zu' : 'en';
+            document.getElementById('hud-title').innerText = trans[currentLang].hudTitle;
+            document.getElementById('lang-btn').innerText = trans[currentLang].langBtn;
+            document.getElementById('alert-banner').innerText = trans[currentLang].alertBanner;
+            
+            document.getElementById('stat-incidents-label').innerText = trans[currentLang].statIncidents;
+            document.getElementById('stat-zones-label').innerText = trans[currentLang].statZones;
+            document.getElementById('stat-responders-label').innerText = trans[currentLang].statResponders;
+            document.getElementById('stat-websocket-label').innerText = trans[currentLang].statWebsocket;
+
+            document.getElementById('sos-title').innerHTML = `<i class="fa-solid fa-circle-radiation animate-pulse"></i> \${trans[currentLang].sosTitle}`;
+            document.getElementById('sos-desc').innerText = trans[currentLang].sosDesc;
+            document.getElementById('sos-btn').innerText = trans[currentLang].sosBtn;
+
+            document.getElementById('tts-title').innerText = trans[currentLang].ttsTitle;
+            document.getElementById('tts-desc').innerText = trans[currentLang].ttsDesc;
+            
+            document.getElementById('feed-title').innerText = trans[currentLang].feedTitle;
+            document.getElementById('map-title').innerHTML = `<i class="fa-solid fa-satellite-dish text-red-500"></i> \${trans[currentLang].mapTitle}`;
+            document.getElementById('nearby-title').innerText = trans[currentLang].nearbyTitle;
+            document.getElementById('ai-title').innerHTML = `<i class="fa-solid fa-robot text-red-500"></i> \${trans[currentLang].aiTitle}`;
+            document.getElementById('resource-title').innerText = trans[currentLang].resourceTitle;
+            document.getElementById('alerts-title').innerText = trans[currentLang].alertsTitle;
+        }
+
+        function triggerSOS() {
+            const beacon = document.getElementById('sos-telemetry');
+            const btn = document.getElementById('sos-btn');
+            beacon.classList.toggle('hidden');
+            if (!beacon.classList.contains('hidden')) {
+                btn.innerText = "SOS BROADCASTING...";
+                btn.classList.add('bg-orange-600');
+            } else {
+                btn.innerText = "TRIGGER SOS BROADCAST";
+                btn.classList.remove('bg-orange-600');
+            }
+        }
+
+        function speakSOP() {
+            let message = "This is an emergency protocol broadcast. Head to the nearest highlighted trauma center immediately.";
+            if (currentLang === 'zu') {
+                message = "Leli isixwayiso sezimo eziphuthumayo. Sicela ulibangise endaweni ephephile eseduze nawe ngokushesha.";
+            }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(message);
+            utterance.lang = currentLang === 'zu' ? 'zu-ZA' : 'en-US';
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function sendChatMessage(event) {
+            event.preventDefault();
+            const input = document.getElementById('ai-input');
+            const chatbox = document.getElementById('ai-chatbox');
+            if (!input.value.trim()) return;
+
+            chatbox.innerHTML += `<div class="p-2 bg-red-950/40 rounded text-right ml-auto max-w-[80%] text-slate-200">\${input.value}</div>`;
+            
+            const prompt = input.value.toLowerCase();
+            let reply = "Processing data vectors... Standard response protocol: move to high-altitude zones and verify distress beacon configurations.";
+            
+            if (prompt.includes('flood') || prompt.includes('amanzi')) {
+                reply = "⚠️ Gemini SOP: Flash flood warning validated. Evacuate immediately to Safe Haven Sports Shelter at vector coordinate 0.12, 0.44.";
+            } else if (prompt.includes('medical') || prompt.includes('dokotela')) {
+                reply = "🩺 Gemini SOP: Tactical route to Trauma Response Center (0.6 km away) has been compiled on your active HUD maps.";
+            }
+
+            setTimeout(() => {
+                chatbox.innerHTML += `<div class="p-2 bg-slate-900 border border-slate-850 text-slate-300 rounded max-w-[80%]">\${reply}</div>`;
+                chatbox.scrollTop = chatbox.scrollHeight;
+            }, 600);
+
+            input.value = "";
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        setInterval(() => {
+            const alerts = [
+                "New logistics update: Water delivery dispatched.",
+                "WebSocket telemetry handshake validated.",
+                "Safe Zone 4 reporting standard power matrix."
+            ];
+            const randAlert = alerts[Math.floor(Math.random() * alerts.length)];
+            const time = new Date().toLocaleTimeString();
+            const box = document.getElementById('ws-alerts');
+            box.innerHTML = `<div class="p-1.5 bg-slate-950 rounded border border-slate-850">● [\${time}] \${randAlert}</div>` + box.innerHTML;
+        }, 8000);
+    </script>
+</body>
+</html>
