@@ -1,7 +1,6 @@
-"use client";
-
 import React, { useState } from "react";
-import { Mail, Lock, Loader2, ArrowRight, ShieldAlert, CheckCircle2, User } from "lucide-react";
+import { Mail, Lock, Loader2, ArrowRight, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { supabase } from "../../lib/supabase";
 
 interface SignupFormProps {
   onSuccess?: () => void;
@@ -9,7 +8,6 @@ interface SignupFormProps {
 }
 
 export function SignupForm({ onSuccess, onLoginClick }: SignupFormProps) {
-  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -24,25 +22,25 @@ export function SignupForm({ onSuccess, onLoginClick }: SignupFormProps) {
     setSuccess(null);
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match. Please re-enter.");
+      setError("Passwords do not match.");
       setIsLoading(false);
       return;
     }
 
     try {
-      // Direct integration call mock/real based on environment
-      // const supabase = createClient();
-      // const { error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: fullName } } });
-      
-      // Simulating network request
-      await new Promise((resolve) => setTimeout(resolve, 1200));
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+      });
 
-      setSuccess("Account request generated! Please verify your email box to complete activation.");
+      if (signUpError) throw signUpError;
+
+      setSuccess("Account request sent! Check your email for validation link.");
       if (onSuccess) {
         setTimeout(onSuccess, 1500);
       }
     } catch (err: any) {
-      setError(err.message || "An account creation error occurred.");
+      setError(err.message || "An error occurred during signup.");
     } finally {
       setIsLoading(false);
     }
@@ -51,8 +49,8 @@ export function SignupForm({ onSuccess, onLoginClick }: SignupFormProps) {
   return (
     <div className="w-full max-w-md p-8 bg-slate-900/50 border border-slate-900 rounded-2xl shadow-xl backdrop-blur-md">
       <div className="space-y-2 text-center mb-6">
-        <h3 className="text-xl font-bold text-white tracking-tight">Request Clearance</h3>
-        <p className="text-xs text-slate-400">Create operator account to join active tactical response groups.</p>
+        <h3 className="text-xl font-bold text-white tracking-tight">Request Credentials</h3>
+        <p className="text-xs text-slate-400">Register your node profile on the disaster management channel.</p>
       </div>
 
       {error && (
@@ -71,21 +69,6 @@ export function SignupForm({ onSuccess, onLoginClick }: SignupFormProps) {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1">
-          <label className="block text-[11px] font-mono text-slate-400 uppercase tracking-wider">Full Name</label>
-          <div className="relative">
-            <User className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
-            <input
-              type="text"
-              required
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              placeholder="Officer Jane Doe"
-              className="w-full bg-slate-950 border border-slate-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded-lg pl-10 pr-4 py-2.5 text-xs text-slate-200 outline-none transition"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-1">
           <label className="block text-[11px] font-mono text-slate-400 uppercase tracking-wider">Email Address</label>
           <div className="relative">
             <Mail className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
@@ -100,35 +83,33 @@ export function SignupForm({ onSuccess, onLoginClick }: SignupFormProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1">
-            <label className="block text-[11px] font-mono text-slate-400 uppercase tracking-wider">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full bg-slate-950 border border-slate-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded-lg pl-10 pr-4 py-2.5 text-xs text-slate-200 outline-none transition"
-              />
-            </div>
+        <div className="space-y-1">
+          <label className="block text-[11px] font-mono text-slate-400 uppercase tracking-wider">Secret Passphrase</label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••••••"
+              className="w-full bg-slate-950 border border-slate-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded-lg pl-10 pr-4 py-2.5 text-xs text-slate-200 outline-none transition"
+            />
           </div>
+        </div>
 
-          <div className="space-y-1">
-            <label className="block text-[11px] font-mono text-slate-400 uppercase tracking-wider">Confirm</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
-              <input
-                type="password"
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full bg-slate-950 border border-slate-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded-lg pl-10 pr-4 py-2.5 text-xs text-slate-200 outline-none transition"
-              />
-            </div>
+        <div className="space-y-1">
+          <label className="block text-[11px] font-mono text-slate-400 uppercase tracking-wider">Confirm Passphrase</label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
+            <input
+              type="password"
+              required
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="••••••••••••"
+              className="w-full bg-slate-950 border border-slate-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded-lg pl-10 pr-4 py-2.5 text-xs text-slate-200 outline-none transition"
+            />
           </div>
         </div>
 
@@ -140,11 +121,11 @@ export function SignupForm({ onSuccess, onLoginClick }: SignupFormProps) {
           {isLoading ? (
             <>
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              <span>CREATING CLEARANCE...</span>
+              <span>GENERATING SESSION KEYS...</span>
             </>
           ) : (
             <>
-              <span>SUBMIT CLEARANCE REQUEST</span>
+              <span>REGISTER SECURITY KEY</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </>
           )}
@@ -152,9 +133,9 @@ export function SignupForm({ onSuccess, onLoginClick }: SignupFormProps) {
       </form>
 
       <div className="mt-6 pt-4 border-t border-slate-900 text-center text-[11px] text-slate-400">
-        Already have secure clearance?{" "}
+        Already have active credentials?{" "}
         <button onClick={onLoginClick} className="text-red-400 hover:text-red-300 hover:underline font-semibold">
-          Access HUD
+          Secure Login
         </button>
       </div>
     </div>

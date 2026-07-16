@@ -1,14 +1,13 @@
-"use client";
-
 import React, { useState } from "react";
 import { Mail, Loader2, ArrowRight, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { supabase } from "../../lib/supabase";
 
 interface ForgotPasswordFormProps {
   onSuccess?: () => void;
-  onLoginClick?: () => void;
+  onBackToLoginClick?: () => void;
 }
 
-export function ForgotPasswordForm({ onSuccess, onLoginClick }: ForgotPasswordFormProps) {
+export function ForgotPasswordForm({ onSuccess, onBackToLoginClick }: ForgotPasswordFormProps) {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,21 +20,18 @@ export function ForgotPasswordForm({ onSuccess, onLoginClick }: ForgotPasswordFo
     setSuccess(null);
 
     try {
-      // Direct integration call mock/real based on environment
-      // const supabase = createClient();
-      // const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      //   redirectTo: `${window.location.origin}/auth/update-password`,
-      // });
-      
-      // Simulating network request
-      await new Promise((resolve) => setTimeout(resolve, 1200));
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
 
-      setSuccess("If that account is registered, a password recovery secure link has been sent.");
+      if (resetError) throw resetError;
+
+      setSuccess("If a matching identity exists, reset telemetry details have been transmitted.");
       if (onSuccess) {
-        setTimeout(onSuccess, 1500);
+        setTimeout(onSuccess, 2000);
       }
     } catch (err: any) {
-      setError(err.message || "An error occurred while dispatching recovery request.");
+      setError(err.message || "An error occurred executing recovery request.");
     } finally {
       setIsLoading(false);
     }
@@ -44,8 +40,8 @@ export function ForgotPasswordForm({ onSuccess, onLoginClick }: ForgotPasswordFo
   return (
     <div className="w-full max-w-md p-8 bg-slate-900/50 border border-slate-900 rounded-2xl shadow-xl backdrop-blur-md">
       <div className="space-y-2 text-center mb-6">
-        <h3 className="text-xl font-bold text-white tracking-tight">Recovery Dispatch</h3>
-        <p className="text-xs text-slate-400">Trigger standard email security token reset pipeline.</p>
+        <h3 className="text-xl font-bold text-white tracking-tight">Telemetry Recovery</h3>
+        <p className="text-xs text-slate-400">Trigger a secured authentication reset protocol link.</p>
       </div>
 
       {error && (
@@ -86,11 +82,11 @@ export function ForgotPasswordForm({ onSuccess, onLoginClick }: ForgotPasswordFo
           {isLoading ? (
             <>
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              <span>DISPATCHING SECURITY TOKEN...</span>
+              <span>TRANSMITTING RECOVERY PACKET...</span>
             </>
           ) : (
             <>
-              <span>DISPATCH RECOVERY SECURE LINK</span>
+              <span>DISPATCH PASSWORD RESET LINK</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </>
           )}
@@ -98,9 +94,9 @@ export function ForgotPasswordForm({ onSuccess, onLoginClick }: ForgotPasswordFo
       </form>
 
       <div className="mt-6 pt-4 border-t border-slate-900 text-center text-[11px] text-slate-400">
-        Remembered credentials?{" "}
-        <button onClick={onLoginClick} className="text-red-400 hover:text-red-300 hover:underline font-semibold">
-          Sign In
+        Remembered your clearance?{" "}
+        <button onClick={onBackToLoginClick} className="text-red-400 hover:text-red-300 hover:underline font-semibold">
+          Return to Login
         </button>
       </div>
     </div>

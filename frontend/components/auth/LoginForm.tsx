@@ -1,7 +1,6 @@
-"use client";
-
 import React, { useState } from "react";
 import { Mail, Lock, Loader2, ArrowRight, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { supabase } from "../../lib/supabase";
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -23,16 +22,12 @@ export function LoginForm({ onSuccess, onForgotPasswordClick, onSignupClick }: L
     setSuccess(null);
 
     try {
-      // Direct integration call mock/real based on environment
-      // const supabase = createClient();
-      // const { error } = await supabase.auth.signInWithPassword({ email, password });
-      
-      // Simulating network request for high responsiveness
-      await new Promise((resolve) => setTimeout(resolve, 1200));
-      
-      if (email.includes("fail")) {
-        throw new Error("Invalid login credentials. Please check your email or password.");
-      }
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) throw authError;
 
       setSuccess("Successfully logged in! Redirecting to secure operational dashboard...");
       if (onSuccess) {
