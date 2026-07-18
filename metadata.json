@@ -1,0 +1,6 @@
+{
+  "name": "Disaster Response Assistant",
+  "description": "Full-stack AI Disaster Response Assistant with Next.js 15, FastAPI, Supabase, and IBM watsonx Granite.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
